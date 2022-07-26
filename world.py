@@ -250,5 +250,5 @@ class World1(World):
         self.setup_neighbors(self.room_classes, self.rooms_layout)
 
         # sets the starting room
-        self.current_room = self.room19
+        self.current_room = self.start_room
 
