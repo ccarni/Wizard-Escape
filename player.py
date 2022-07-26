@@ -13,7 +13,7 @@ class Player(pygame.sprite.Sprite):
         self.pos = np.array(list(pos))
         self.rect = self.image.get_rect()
         self.rect.center = pos
-        self.max_health = 99
+        self.max_health = 5
         self.health = self.max_health
         self.dead = False
 
