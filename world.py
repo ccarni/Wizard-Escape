@@ -5,16 +5,22 @@ import wall
 import enemy
 import art
 import attacks
-
+import numpy as np
 
 class World():
     def __init__(self, runner):
         self.runner = runner
         self.screen = runner.screen
         self.player = runner.player
+        self.room_classes = pygame.sprite.Group()
+        self.visited_rooms = []
+        self.rooms = []
 
     def set_room(self, room, door):
         self.current_room = room
+        self.visited_rooms.append(self.current_room)
+        self.runner.update_minimap_position()
+        self.player.stamina = self.player.max_stamina
 
         horizontal_center = self.screen.get_width() / 2
         if door.location == 0:
@@ -28,29 +34,29 @@ class World():
             
         #projectiles shouldn't carry over between rooms
         self.player.projectiles.empty()
-        print(room.current_path)
 
-
-    def make_level(self, filename):
-        return Room(self.screen, self.player, filename, neighbors=['up', 'down', 'left', 'right'])
+    def make_level(self, filename, tag=None):
+        rm = Room(self.screen, self.player, filename, tag)
+        self.room_classes.add(rm)
+        return rm
 
     def collide_doors(self, player):
         for door in self.current_room.doors:
             if pygame.rect.Rect.colliderect(player.rect, door.rect):
                 self.set_room(door.destination, door)
 
-    def setup_neighbors(self, room_classes, rooms_layout):
+    # makes finding the index of a room in the list easier
+    def find(self, list, item):
+        # if not item in list: raise ChildProcessError('Find Function: item not in list')
+        for x, y in enumerate(list):
+            if item in y:
+                return [x, y.index(item)]
 
-        # makes finding the index of a room in the list easier
-        def find(list, item):
-            for i in range(len(list[0])):
-                for j in range(len(list[i])):
-                    if list[i][j] == item:
-                        return [i, j]
+    def setup_neighbors(self, room_classes, rooms_layout):
 
         # setup neighbors
         for room in room_classes:
-            index = find(rooms_layout, room)
+            index = self.find(rooms_layout, room)
             room.set_neighbors(self.get_neighbors(rooms_layout, index[0], index[1]))
 
     def get_neighbors(self, rooms, room_index1, room_index2):
@@ -70,13 +76,46 @@ class World():
         for door in self.current_room.doors:
             pygame.draw.rect(self.screen, door.color if cleared else door.disabled_color, door.rect)
 
+    def make_rooms(self):
+        # spawn
+        self.rooms.append(R('spn', 'levelspawn'))
+
+        # blank rooms
+        for i in range(3):
+            self.rooms.append(R(f'br{i + 1}', 'levelspawn'))
+
+        # weapon rooms
+        for i in range(3):
+            self.rooms.append(R(f'rw{i + 1}', f'levelweapon{i + 1}'))
+
+        # basic rooms
+        for i in range(19):
+            self.rooms.append(R(f'r{i + 1}', f'level{i + 1}'))
+
+        # win room
+        self.rooms.append(R('win', 'level20'))
+
+        # misc
+        self.rooms.append(R('9-', 'level9'))
+        self.rooms.append(R('14-', 'level14'))
+
+    def get_room(self, name):
+        for r in self.rooms:
+            if r.name == name:
+                return r.data
+
+class R:
+    def __init__(self, name, data):
+        self.name = name
+        self.data = data
 
 class Room(pygame.sprite.Sprite):
-    def __init__(self, screen, player, level_path, neighbors=['up', 'down', 'left', 'right']):
+    def __init__(self, screen, player, level_path, tag=None):
         pygame.sprite.Sprite.__init__(self)
         self.screen = screen
         self.player = player
         self.current_path = level_path
+        self.tag = tag
 
         self.clear = False
 
@@ -86,13 +125,14 @@ class Room(pygame.sprite.Sprite):
         self.powerups = pygame.sprite.Group()
         self.wall_image = self.draw_wall(screen)
 
-        self.set_neighbors(neighbors)
+        self.neighbors = []
+
         self.setup_level(self.screen, self.player)
 
     def setup_level(self, screen, player):
         #CHANGE THIS TO YOUR DIRECTORY \/
-        folder_name = 'Wizard Escape v1.2.5'
-        with open(f'../{folder_name}/levels/{self.current_path}.txt', 'r') as level:
+        # folder_name = 'WizardEscape'
+        with open(f'.\levels\{self.current_path}.txt', 'r') as level:
             block_grid = level.read()
 
         #splits block grid into multiple strings per line
@@ -108,21 +148,47 @@ class Room(pygame.sprite.Sprite):
                     self.walls.add(w)
                 #enemies
                 elif block_grid[row][column] == 'e':
-                    e = enemy.Enemy0(40, screen, player, 10, ((column * tilesize, row * tilesize)))
+                    e = enemy.BasicEnemy(40, 8, screen, player, 10, ((column * tilesize, row * tilesize)))
+                    self.enemies.add(e)
+                elif block_grid[row][column] == 's':
+                    e = enemy.StrongEnemy(40, 10, screen, player, 16, ((column * tilesize, row * tilesize)))
+                    self.enemies.add(e)
+                elif block_grid[row][column] == 'q':
+                    e = enemy.SlowEnemy(30, 3, screen, player, 6, ((column * tilesize, row * tilesize)))
                     self.enemies.add(e)
                 #powerups
                 elif block_grid[row][column] == 'h':
                     h = powerup.Heart(screen,  art.draw_heart(screen, 60), ((column * tilesize, row * tilesize)))
                     self.powerups.add(h)
+                elif block_grid[row][column] == 'g':
+                    g = powerup.GoldHeart(screen, art.draw_gold_heart(screen, 60), ((column * tilesize, row * tilesize)))
+                    self.powerups.add(g)
                 #trophies
                 elif block_grid[row][column] == 't':
                     t = powerup.Trophy(screen,  art.draw_trophy(screen, 60), ((column * tilesize, row * tilesize)))
                     self.powerups.add(t)
+                #attacks
+                elif block_grid[row][column] == 'i':
+                    a = powerup.Attack(screen,  art.draw_ice(screen, 60), ((column * tilesize, row * tilesize)), attacks.ice, attacks.ice_cooldown)
+                    self.powerups.add(a)
+                elif block_grid[row][column] == 'n':
+                    a = powerup.Attack(screen,  art.draw_wind(screen, 60), ((column * tilesize, row * tilesize)), attacks.wind, attacks.wind_cooldown)
+                    self.powerups.add(a)
+                elif block_grid[row][column] == 'l':
+                    a = powerup.Attack(screen,  art.draw_leaf(screen, 60), ((column * tilesize, row * tilesize)), attacks.leaf, attacks.leaf_cooldown)
+                    self.powerups.add(a)
+                elif block_grid[row][column] == 'f':
+                    a = powerup.Attack(screen,  art.draw_fireball(screen, 60), ((column * tilesize, row * tilesize)), attacks.fireball, attacks.fireball_cooldown)
+                    self.powerups.add(a)
+                elif block_grid[row][column] == 'r':
+                    a = powerup.Attack(screen,  art.draw_earth(screen, 60), ((column * tilesize, row * tilesize)), attacks.earth, attacks.earth_cooldown)
+                    self.powerups.add(a)
 
     def set_neighbors(self, neighbors):
         self.doors.empty()
         for i in range(4):
             if neighbors[i] != None:
+                self.neighbors.append(neighbors[i])
                 self.doors.add(Door(i, neighbors[i], self.screen))
 
     def draw_wall(self, screen):
@@ -172,83 +238,32 @@ class World1(World):
     def __init__(self, runner):
         World.__init__(self, runner)
 
-        self.room_classes = pygame.sprite.Group()
+        self.make_rooms()
 
-        # make rooms
-        self.start_room = self.make_level('levelspawn')
-        self.blank_room = self.make_level('levelspawn')
-        self.blank_room2 = self.make_level('levelspawn')
-        self.blank_room3 = self.make_level('levelspawn')
-        self.roomw1 = self.make_level('levelweapon1')
-        self.roomw2 = self.make_level('levelweapon2')
-        self.room1 = self.make_level('level1')
-        self.room2 = self.make_level('level2')
-        self.room3 = self.make_level('level3')
-        self.room4 = self.make_level('level4')
-        self.room5 = self.make_level('level5')
-        self.room6 = self.make_level('level6')
-        self.room7 = self.make_level('level7')
-        self.room8 = self.make_level('level8')
-        self.room9 = self.make_level('level9')
-        self.room9_2 = self.make_level('level9')
-        self.room10 = self.make_level('level10')
-        self.room11 = self.make_level('level11')
-        self.room12 = self.make_level('level12')
-        self.room13 = self.make_level('level13')
-        self.room14 = self.make_level('level14')
-        self.room14_2 = self.make_level('level14')
-        self.room15 = self.make_level('level15')
-        self.room16 = self.make_level('level16')
-        self.room17 = self.make_level('level17')
-        self.room18 = self.make_level('level18')
-        self.room19 = self.make_level('level19')
-        self.roomwin = self.make_level('level20')
+        # convert room data into a room
+        for r in self.rooms:
+            r.data = self.make_level(r.data)
 
-        # add them to the room_classes group
-        self.room_classes.add(self.start_room)
-        self.room_classes.add(self.blank_room)
-        self.room_classes.add(self.blank_room2)
-        self.room_classes.add(self.blank_room3)
-        self.room_classes.add(self.room1)
-        self.room_classes.add(self.room2)
-        self.room_classes.add(self.room3)
-        self.room_classes.add(self.room4)
-        self.room_classes.add(self.room5)
-        self.room_classes.add(self.room6)
-        self.room_classes.add(self.room7)
-        self.room_classes.add(self.room8)
-        self.room_classes.add(self.room9)
-        self.room_classes.add(self.room9_2)
-        self.room_classes.add(self.room10)
-        self.room_classes.add(self.room11)
-        self.room_classes.add(self.room12)
-        self.room_classes.add(self.room13)
-        self.room_classes.add(self.room14)
-        self.room_classes.add(self.room14_2)
-        self.room_classes.add(self.room15)
-        self.room_classes.add(self.room16)
-        self.room_classes.add(self.room17)
-        self.room_classes.add(self.room18)
-        self.room_classes.add(self.room19)
-        self.room_classes.add(self.roomwin)
-        self.room_classes.add(self.roomw1)
-        self.room_classes.add(self.roomw2)
+        # simplified so it takes up less space and looks better
+        g = self.get_room
 
-        # tells the game how to layout rooms
-        self.rooms_layout = [[None, None, None, None, None, None, None, None, None, None, None],
-                             [None, None, self.roomw1, None, None, None, None, None, None, None, None],
-                             [None, None, self.room9, None, None, None, None, None, None, None, None],
-                             [None, None, self.room6, None, None, self.room17, self.room14, self.blank_room2, self.blank_room3, None, None],
-                             [None, None, self.room3, None, None, self.room16, None, None, self.room18, None, None],
-                             [None, self.room1, self.room2, self.room4, None, self.room15, None, None, self.room19, self.blank_room, None],
-                             [None, self.start_room, None, self.room5, None, self.room14_2, self.room13, None, None, self.roomwin, None],
-                             [None, None, None, self.room7, None, self.room12, None, None, None, None, None],
-                             [None, self.roomw2, self.room11, self.room8, self.room9_2, self.room10, None, None, None, None, None],
-                             [None, None, None, None, None, None, None, None, None, None, None],
-                             [None, None, None, None, None, None, None, None, None, None, None]]
+        self.map = [
+         [None,     None,     None,     None,     None,     None,     None,     None,     None,     None,     None],
+         [None,     None,     g('rw1'), None,     None,     None,     None,     None,     None,     None,     None],
+         [None,     None,     g('r9'),  None,     None,     None,     None,     None,     None,     None,     None],
+         [None,     None,     g('r6'),  None,     None,     g('r17'), g('r14'), g('br2'), g('br3'), None,     None],
+         [None,     None,     g('r3'),  None,     None,     g('r16'), None,     None,     g('r18'), None,     None],
+         [None,     g('r1'),  g('r2'),  g('r4'),  None,     g('r15'), None,     None,     g('r19'), g('br1'), None],
+         [None,     g('spn'), None,     g('r5'),  None,     g('14-'), g('r13'), g('rw3'), None,     g('win'), None],
+         [None,     None,     None,     g('r7'),  None,     g('r12'), None,     None,     None,    None,      None],
+         [None,     g('rw2'), g('r11'), g('r8'),  g('9-'),  g('r10'), None,     None,     None,    None,      None],
+         [None,     None,     None,     None,     None,     None,     None,     None,     None,    None,      None]]
 
-        self.setup_neighbors(self.room_classes, self.rooms_layout)
+        # nicely formatted line
+        # [None,     None,     None,     None,     None,     None,     None,     None,     None,     None,     None],
+
+        self.setup_neighbors(self.room_classes, self.map)
 
         # sets the starting room
-        self.current_room = self.start_room
-
+        self.current_room = g('spn')
+        self.visited_rooms.append(self.current_room)

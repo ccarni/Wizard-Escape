@@ -29,79 +29,97 @@ def draw_enemy(screen, size, color1=(255, 0, 0), color2=(0, 0, 0)):
 
 #PLAYER
 def player_rotate(surface, direction, last_direction):
-        left = -90
-        right = 90
-        rotated_surface = surface
-        if direction == [0, 0]:
-            direction = last_direction
+    left = -90
+    right = 90
+    rotated_surface = surface
+    if direction == [0, 0]:
+        direction = last_direction
 
-        if direction[0] == -1:
-            rotated_surface = pygame.transform.rotate(surface, right * 2)
-        elif direction == [0, 1]:
-            rotated_surface = pygame.transform.rotate(surface, left)
-        elif direction == [0, -1]:
-            rotated_surface = pygame.transform.rotate(surface, right)
-        #already looking right so we dont need to check it
-        last_dir = direction
-        return rotated_surface, last_dir
+    if direction[0] == -1:
+        rotated_surface = pygame.transform.rotate(surface, right * 2)
+    elif direction == [0, 1]:
+        rotated_surface = pygame.transform.rotate(surface, left)
+    elif direction == [0, -1]:
+        rotated_surface = pygame.transform.rotate(surface, right)
+    #already looking right so we dont need to check it
+    last_dir = direction
+    return rotated_surface, last_dir
 
 def draw_player(screen, size, color1, color2, direction, last_direction):
     #player draw function
-        player_surf = pygame.Surface((screen.get_width() / 20, screen.get_width() / 20))
-        player_surf.fill(color1)
-        p_height = player_surf.get_height()
-        p_width = player_surf.get_width()
-        color3 = (62, 6, 145)
-        color4 = (45, 2, 110)
-        color5 = (191, 179, 42)
-        # eyes
-        pygame.draw.circle(player_surf, color2, (p_width * 5 / 7, p_height / 3), p_height / 8)
-        pygame.draw.circle(player_surf, color2, (p_width * 5 / 7, p_height * 2 / 3), p_height / 8)
-        # mouth
-        pygame.draw.line(player_surf, color2, (p_width * 6 / 7, p_height / 3), (p_width * 6 / 7, p_height * 2 / 3), 2)
-        # hat
-        hat_rect = pygame.rect.Rect((p_width * 2 / 9, 0), (p_width / 2, p_height))
-        pygame.draw.ellipse(player_surf, color3, hat_rect)
-        pygame.draw.polygon(player_surf, color3, (
-        (p_width * 3 / 100, p_height / 2), (p_width / 3, p_height / 5), (p_width / 3, p_height * 4 / 5)))
-        pygame.draw.circle(player_surf, color4, (p_width * 5 / 100, p_height / 2), 3)
-        pygame.draw.circle(player_surf, color5, (p_width * 3 / 5, p_height * 2 / 3), 1)
-        pygame.draw.circle(player_surf, color5, (p_width / 3, p_height / 2), 1)
-        pygame.draw.circle(player_surf, color5, (p_width / 3, p_height / 4), 1)
-        pygame.draw.circle(player_surf, color5, (p_width / 2, p_height / 5), 1)
-        pygame.draw.circle(player_surf, color5, (p_width / 3, p_height * 3 / 4), 1)
-        pygame.draw.circle(player_surf, color5, (p_width / 2, p_height * 2 / 5), 1)
-        pygame.draw.circle(player_surf, color5, (p_width / 3, p_height / 4), 1)
-        player_surf, last_dir = player_rotate(player_surf, direction, last_direction)
-        player_surf = pygame.transform.smoothscale(player_surf, (size, size))
-        return player_surf, last_dir
+    player_surf = pygame.Surface((screen.get_width() / 20, screen.get_width() / 20))
+    player_surf.fill(color1)
+    p_height = player_surf.get_height()
+    p_width = player_surf.get_width()
+    color3 = (62, 6, 145)
+    color4 = (45, 2, 110)
+    color5 = (191, 179, 42)
+    # eyes
+    pygame.draw.circle(player_surf, color2, (p_width * 5 / 7, p_height / 3), p_height / 8)
+    pygame.draw.circle(player_surf, color2, (p_width * 5 / 7, p_height * 2 / 3), p_height / 8)
+    # mouth
+    pygame.draw.line(player_surf, color2, (p_width * 6 / 7, p_height / 3), (p_width * 6 / 7, p_height * 2 / 3), 2)
+    # hat
+    hat_rect = pygame.rect.Rect((p_width * 2 / 9, 0), (p_width / 2, p_height))
+    pygame.draw.ellipse(player_surf, color3, hat_rect)
+    pygame.draw.polygon(player_surf, color3, (
+    (p_width * 3 / 100, p_height / 2), (p_width / 3, p_height / 5), (p_width / 3, p_height * 4 / 5)))
+    pygame.draw.circle(player_surf, color4, (p_width * 5 / 100, p_height / 2), 3)
+    pygame.draw.circle(player_surf, color5, (p_width * 3 / 5, p_height * 2 / 3), 1)
+    pygame.draw.circle(player_surf, color5, (p_width / 3, p_height / 2), 1)
+    pygame.draw.circle(player_surf, color5, (p_width / 3, p_height / 4), 1)
+    pygame.draw.circle(player_surf, color5, (p_width / 2, p_height / 5), 1)
+    pygame.draw.circle(player_surf, color5, (p_width / 3, p_height * 3 / 4), 1)
+    pygame.draw.circle(player_surf, color5, (p_width / 2, p_height * 2 / 5), 1)
+    pygame.draw.circle(player_surf, color5, (p_width / 3, p_height / 4), 1)
+    player_surf, last_dir = player_rotate(player_surf, direction, last_direction)
+    player_surf = pygame.transform.smoothscale(player_surf, (size, size))
+    return player_surf, last_dir
 
 #POWERUPS
 def draw_heart(screen, size):
-        heart_surf = pygame.Surface((screen.get_width() / 10, screen.get_width() / 10)).convert_alpha()
-        heart_surf.fill((0, 0, 0, 0))
-        h_height = heart_surf.get_height()
-        h_width = heart_surf.get_width()
-        pygame.draw.polygon(heart_surf, (240, 58, 58), (
-        (h_width / 2, h_height * 7 / 10), (h_width / 8, h_height / 4), (h_width * 3 / 19, h_height / 8),
-        (h_width / 3, h_height / 20), (h_width * 8 / 17, h_height / 8), (h_width * 2 / 3, h_height / 20),
-        (h_width * 16 / 19, h_height / 8), (h_width * 56 / 65, h_height / 4)))
-        pygame.draw.polygon(heart_surf, (196, 202, 206), (
-        (h_width / 2, h_height * 7 / 10), (h_width / 8, h_height / 4), (h_width * 3 / 19, h_height / 8),
-        (h_width / 3, h_height / 20), (h_width * 8 / 17, h_height / 8), (h_width * 2 / 3, h_height / 20),
-        (h_width * 16 / 19, h_height / 8), (h_width * 56 / 65, h_height / 4)), 3)
-        heart_surf = pygame.transform.smoothscale(heart_surf, (size, size))
-        return heart_surf
+    heart_surf = pygame.Surface((screen.get_width() / 10, screen.get_width() / 10)).convert_alpha()
+    heart_surf.fill((0, 0, 0, 0))
+    h_height = heart_surf.get_height()
+    h_width = heart_surf.get_width()
+    pygame.draw.polygon(heart_surf, (240, 58, 58), (
+    (h_width / 2, h_height * 7 / 10), (h_width / 8, h_height / 4), (h_width * 3 / 19, h_height / 8),
+    (h_width / 3, h_height / 20), (h_width * 8 / 17, h_height / 8), (h_width * 2 / 3, h_height / 20),
+    (h_width * 16 / 19, h_height / 8), (h_width * 56 / 65, h_height / 4)))
+    pygame.draw.polygon(heart_surf, (196, 202, 206), (
+    (h_width / 2, h_height * 7 / 10), (h_width / 8, h_height / 4), (h_width * 3 / 19, h_height / 8),
+    (h_width / 3, h_height / 20), (h_width * 8 / 17, h_height / 8), (h_width * 2 / 3, h_height / 20),
+    (h_width * 16 / 19, h_height / 8), (h_width * 56 / 65, h_height / 4)), 3)
+    heart_surf = pygame.transform.smoothscale(heart_surf, (size, size))
+    return heart_surf
+
+def draw_gold_heart(screen, size):
+    heart_surf = pygame.Surface((screen.get_width() / 10, screen.get_width() / 10)).convert_alpha()
+    heart_surf.fill((0, 0, 0, 0))
+    h_height = heart_surf.get_height()
+    h_width = heart_surf.get_width()
+    pygame.draw.polygon(heart_surf, (255, 215, 0), (
+    (h_width / 2, h_height * 7 / 10), (h_width / 8, h_height / 4), (h_width * 3 / 19, h_height / 8),
+    (h_width / 3, h_height / 20), (h_width * 8 / 17, h_height / 8), (h_width * 2 / 3, h_height / 20),
+    (h_width * 16 / 19, h_height / 8), (h_width * 56 / 65, h_height / 4)))
+    pygame.draw.polygon(heart_surf, (255, 255, 255), (
+    (h_width / 2, h_height * 7 / 10), (h_width / 8, h_height / 4), (h_width * 3 / 19, h_height / 8),
+    (h_width / 3, h_height / 20), (h_width * 8 / 17, h_height / 8), (h_width * 2 / 3, h_height / 20),
+    (h_width * 16 / 19, h_height / 8), (h_width * 56 / 65, h_height / 4)), 3)
+    heart_surf = pygame.transform.smoothscale(heart_surf, (size, size))
+    return heart_surf
 
 def draw_empty_heart(screen, size):
     heart_surf = pygame.Surface((screen.get_width() / 10, screen.get_width() / 10)).convert_alpha()
     heart_surf.fill((0, 0, 0, 0))
     h_height = heart_surf.get_height()
     h_width = heart_surf.get_width()
+    #inside
     pygame.draw.polygon(heart_surf, (0, 0, 0), (
     (h_width / 2, h_height * 7 / 10), (h_width / 8, h_height / 4), (h_width * 3 / 19, h_height / 8),
     (h_width / 3, h_height / 20), (h_width * 8 / 17, h_height / 8), (h_width * 2 / 3, h_height / 20),
     (h_width * 16 / 19, h_height / 8), (h_width * 56 / 65, h_height / 4)))
+    #outside
     pygame.draw.polygon(heart_surf, (196, 202, 206), (
     (h_width / 2, h_height * 7 / 10), (h_width / 8, h_height / 4), (h_width * 3 / 19, h_height / 8),
     (h_width / 3, h_height / 20), (h_width * 8 / 17, h_height / 8), (h_width * 2 / 3, h_height / 20),
@@ -124,40 +142,75 @@ def draw_trophy(screen, size):
 
 #ATTACKS
 def draw_fireball(screen, size):
-        color1 = (219, 76, 20)
-        color2 = (237, 176, 43)
-        fire_surf = pygame.Surface((screen.get_width() / 20, screen.get_width() / 20))
-        fire_surf.fill((0, 0, 0))
-        f_height = fire_surf.get_height()
-        f_width = fire_surf.get_width()
-        pygame.draw.polygon(fire_surf, color2, ((0, f_height / 3),(f_width / 6, f_height / 3),(f_width / 10, f_height / 5),(f_width / 4, f_height / 5),(f_width / 5, f_height / 10),(f_width * 3 / 5, f_height / 8),(f_width * 4 / 5, f_height / 4),(f_width * 35 / 40, f_height / 2),(f_width * 4 / 5, f_height * 3 / 4),(f_width * 3 / 5, f_height * 7 / 8),(f_width / 5, f_height * 9 / 10),(f_width / 4, f_height * 4 / 5),(f_width / 10, f_height * 4 / 5),(f_width / 6, f_height * 2 / 3),(0, f_height * 2 / 3))) # this sure is a line of cose
-        pygame.draw.circle(fire_surf, color1, (f_width / 2, f_height / 2), f_height / 3)
-        fire_surf.set_colorkey((0, 0, 0))
-        fire_surf = pygame.transform.smoothscale(fire_surf, (size, size))
-        return fire_surf
+    color1 = (219, 76, 20)
+    color2 = (237, 176, 43)
+    fire_surf = pygame.Surface((screen.get_width() / 20, screen.get_width() / 20))
+    fire_surf.fill((0, 0, 0))
+    f_height = fire_surf.get_height()
+    f_width = fire_surf.get_width()
+    pygame.draw.polygon(fire_surf, color2, ((0, f_height / 3),(f_width / 6, f_height / 3),(f_width / 10, f_height / 5),(f_width / 4, f_height / 5),(f_width / 5, f_height / 10),(f_width * 3 / 5, f_height / 8),(f_width * 4 / 5, f_height / 4),(f_width * 35 / 40, f_height / 2),(f_width * 4 / 5, f_height * 3 / 4),(f_width * 3 / 5, f_height * 7 / 8),(f_width / 5, f_height * 9 / 10),(f_width / 4, f_height * 4 / 5),(f_width / 10, f_height * 4 / 5),(f_width / 6, f_height * 2 / 3),(0, f_height * 2 / 3))) # this sure is a line of cose
+    pygame.draw.circle(fire_surf, color1, (f_width / 2, f_height / 2), f_height / 3)
+    fire_surf.set_colorkey((0, 0, 0))
+    fire_surf = pygame.transform.smoothscale(fire_surf, (size, size))
+    return fire_surf
 
 def draw_ice(screen, size):
-        ice_surf = pygame.Surface((screen.get_width() / 20, screen.get_width() / 20)).convert_alpha()
-        ice_surf.fill((0, 0, 0, 0))
-        i_height = ice_surf.get_height()
-        i_width = ice_surf.get_width()
-        pygame.draw.polygon(ice_surf, (109, 214, 252), ((i_width / 7, i_height / 9), (i_width * 6 / 10, i_height / 6), (i_width * 95 / 100, i_height * 4 / 10),(i_width / 3, i_height * 2 / 5)))
-        pygame.draw.polygon(ice_surf, (74, 171, 207), ((i_width / 7, i_height * 6 / 9), (i_width * 4 / 10, i_height * 4 / 6), (i_width * 95 / 100, i_height * 4 / 10),(i_width / 3, i_height * 2 / 5)))
-        pygame.draw.polygon(ice_surf, (20, 91, 117), ((i_width / 7, i_height / 9), (i_width / 3, i_height * 2 / 5), (i_width / 7, i_height * 6 / 9),(i_width / 100, i_height * 2 / 5)))
-        ice_surf = pygame.transform.smoothscale(ice_surf, (size, size))
-        return ice_surf
+    ice_surf = pygame.Surface((screen.get_width() / 20, screen.get_width() / 20)).convert_alpha()
+    ice_surf.fill((0, 0, 0, 0))
+    i_height = ice_surf.get_height()
+    i_width = ice_surf.get_width()
+    pygame.draw.polygon(ice_surf, (109, 214, 252), ((i_width / 7, i_height / 9), (i_width * 6 / 10, i_height / 6), (i_width * 95 / 100, i_height * 4 / 10),(i_width / 3, i_height * 2 / 5)))
+    pygame.draw.polygon(ice_surf, (74, 171, 207), ((i_width / 7, i_height * 6 / 9), (i_width * 4 / 10, i_height * 4 / 6), (i_width * 95 / 100, i_height * 4 / 10),(i_width / 3, i_height * 2 / 5)))
+    pygame.draw.polygon(ice_surf, (20, 91, 117), ((i_width / 7, i_height / 9), (i_width / 3, i_height * 2 / 5), (i_width / 7, i_height * 6 / 9),(i_width / 100, i_height * 2 / 5)))
+    ice_surf = pygame.transform.smoothscale(ice_surf, (size, size))
+    return ice_surf
 
 def draw_earth(screen, size):
-        earth_surf = pygame.Surface((screen.get_width() / 20, screen.get_width() / 20)).convert_alpha()
-        earth_surf.fill((0, 0, 0, 0))
-        e_height = earth_surf.get_height()
-        e_width = earth_surf.get_width()
-        pygame.draw.circle(earth_surf, (59, 36, 1), (e_width * 4 / 6, e_height / 2), e_width / 3)
-        pygame.draw.circle(earth_surf, (82, 56, 16), (e_width * 2 / 6, e_height / 2), e_width / 3)
-        pygame.draw.circle(earth_surf, (107, 81, 40), (0, e_height / 2), e_width / 3)
-        earth_surf = pygame.transform.smoothscale(earth_surf, (size, size))
-        return earth_surf
+    earth_surf = pygame.Surface((screen.get_width() / 20, screen.get_width() / 20)).convert_alpha()
+    earth_surf.fill((0, 0, 0, 0))
+    e_height = earth_surf.get_height()
+    e_width = earth_surf.get_width()
+    pygame.draw.circle(earth_surf, (59, 36, 1), (e_width * 4 / 6, e_height / 2), e_width / 3)
+    pygame.draw.circle(earth_surf, (82, 56, 16), (e_width * 2 / 6, e_height / 2), e_width / 3)
+    pygame.draw.circle(earth_surf, (107, 81, 40), (0, e_height / 2), e_width / 3)
+    earth_surf = pygame.transform.smoothscale(earth_surf, (size, size))
+    return earth_surf
 
+def draw_wind(screen, size):
+    wind_surf = pygame.Surface((screen.get_width() / 20, screen.get_width() / 20)).convert_alpha()
+    wind_surf.fill((0, 0, 0, 0))
+    e_height = wind_surf.get_height()
+    e_width = wind_surf.get_width()
+    pygame.draw.circle(wind_surf, (255, 255, 255), (e_width * 4 / 6, e_height / 2), e_width / 3)
+    pygame.draw.circle(wind_surf, (200, 200, 200), (e_width * 2 / 6, e_height / 2), e_width / 3)
+    pygame.draw.circle(wind_surf, (150, 150, 150), (0, e_height / 2), e_width / 3)
+    wind_surf = pygame.transform.smoothscale(wind_surf, (size, size))
+    return wind_surf
+
+def draw_leaf(screen, size):
+    leaf_surf = pygame.Surface((screen.get_width() / 2, screen.get_width() / 2)).convert_alpha()
+    leaf_surf.fill((0, 0, 0, 0))
+    h_height = leaf_surf.get_height()
+    h_width = leaf_surf.get_width()
+    #stem
+    pygame.draw.rect(leaf_surf, (10, 105, 10), pygame.rect.Rect(h_width / 2 - 20, - h_height / 30, 20, 80))
+    #half 1
+    pygame.draw.polygon(leaf_surf, (0, 200, 0), (
+    (h_width / 2, h_height * 7 / 10), (h_width / 8, h_height / 4), (h_width * 3 / 19, h_height / 8),
+    (h_width / 3, h_height / 20), (h_width * 8 / 17, h_height / 8)))
+    #half 2 (dark)
+    pygame.draw.polygon(leaf_surf, (10, 175, 10), (
+    (h_width * 8 / 17, h_height / 8), (h_width / 2, h_height * 7 / 10), (h_width * 6 / 7, h_height / 4), (h_width * 5 / 6, h_height / 8), (h_width * 2/3, h_height / 20)))
+    #outline
+    pygame.draw.polygon(leaf_surf, (10, 5, 10), (
+    (h_width / 2, h_height * 7 / 10), (h_width / 8, h_height / 4), (h_width * 3 / 19, h_height / 8),
+    (h_width / 3, h_height / 20), (h_width * 8 / 17, h_height / 8), (h_width * 2 / 3, h_height / 20),
+    (h_width * 16 / 19, h_height / 8), (h_width * 56 / 65, h_height / 4)), 3)
+    leaf_surf = pygame.transform.rotate(leaf_surf, 90)
+    leaf_surf = pygame.transform.smoothscale(leaf_surf, (size, size))
+    return leaf_surf
+
+#other
 def draw_background(screen):
     background_surf = pygame.Surface(screen.get_size())
     background_surf.fill((62, 62, 62))
@@ -168,19 +221,152 @@ def draw_background(screen):
         pygame.draw.ellipse(background_surf, (90, 90, 90), floor_rect)
     return background_surf
 
-def draw_hud(screen, max_health, health, heart_size=50):
+def draw_minimap(screen, map, current_room, visited_rooms):
+    screen_width = screen.get_width()
+    map_surf = pygame.Surface(screen.get_size())
+    map_surf.fill((0, 0, 0, 0))
+
+    rows = len(map)
+    columns = len(map[0])
+
+    room_width = 15
+    width = columns * room_width # "backwards" because rows and columns are kind of swapped
+    height = rows * room_width
+    offset = 20
+
+    border_width = 5
+    start_x = screen_width - width - offset
+    start_y = offset
+
+    current_room_color  = (73, 48, 199)
+    visited_color = (92, 64, 51)
+    unvisited_color = (71, 51, 39)
+    win_color = (205, 127, 50)
+    weapon_color = (173, 255, 47)
+
+    neighbors = []
+    for room in visited_rooms:
+        for neighbor in room.neighbors:
+            neighbors.append(neighbor)
+
+    pygame.draw.rect(map_surf, (205, 133, 63), pygame.rect.Rect(start_x - border_width, start_y - border_width, width + 10, height + 10), width=border_width)
+
+    def draw_mini_room(x, y, color):
+        pygame.draw.rect(map_surf, color, pygame.rect.Rect(x, y, room_width, room_width))
+
+    disable_exploration = False
+    reveal_special_rooms = True
+
+    for row in range(len(map)):
+        for column in range(len(map[row])):
+            r = map[row][column]
+            if r != None:
+                color = visited_color if r in visited_rooms else unvisited_color
+                if disable_exploration or reveal_special_rooms or r in visited_rooms:  # toggle if the player can see special rooms on map before visiting them
+                    if r.tag == 'win': color = win_color
+                    if r.tag == 'weapon': color = weapon_color
+                if current_room == map[row][column]: color = current_room_color
+
+                if disable_exploration:
+                    draw_mini_room(start_x + column * room_width, start_y + row * room_width, color)
+
+                if (r in visited_rooms) or (r in neighbors and r not in visited_rooms):
+                    draw_mini_room(start_x + column * room_width, start_y + row * room_width, color)
+
+    map_surf.set_colorkey((0, 0, 0))
+    return map_surf
+
+def draw_hud(screen, max_health, health, max_stamina, stamina, heart_size=50):
     hud = pygame.surface.Surface(screen.get_size())
     for i in range(max_health):
         if (health - 1) >= i:
             heart = draw_heart(screen, heart_size)
         else:
             heart = draw_empty_heart(screen, heart_size)
+
         hud.blit(heart, (i * heart.get_width(), screen.get_height() - heart.get_height()))
-        hud.set_colorkey((0, 0, 0))
+
+    stamina = draw_stamina(screen, max_stamina, stamina)
+
+    hud.blit(stamina, (10, screen.get_height() - heart.get_height() - stamina.get_height()))
+
+    hud.set_colorkey((0, 0, 0))
     return hud
 
+def draw_stamina(screen, max_stamina, stamina, height=50, width_scale = 5):
+    stamina_surf = pygame.Surface((screen.get_width() * 0.3, screen.get_width() * 0.1)).convert_alpha()
+    stamina_surf.fill((0, 0, 0))
+    stamina_ratio = stamina / max_stamina if stamina > 0 else 0
+    border_width = 10
+    size = (int(max_stamina * width_scale), height) # = int(max_stamina * width_scale)
+    # fill
+    pygame.draw.rect(stamina_surf, (0, 0, 255), pygame.rect.Rect(border_width, border_width * 1.2, int((size[0] - border_width * 2) * stamina_ratio), size[1] - border_width * 2.4))
+    # border
+    pygame.draw.rect(stamina_surf, (100, 100, 100), pygame.rect.Rect(0, 0, size[0], size[1]), border_radius=25, width=border_width)
+    stamina_surf = pygame.transform.smoothscale(stamina_surf, size)
+    return stamina_surf
 
 #SCREENS
+def draw_title_screen(screen):
+    title_surf = pygame.Surface((screen.get_width(), screen.get_height())).convert_alpha()
+    title_surf.fill((0, 0, 0))
+    title_font = pygame.font.Font(None, 100)
+    slightly_less_title_font = pygame.font.Font(None, 50)
+
+    text_font = pygame.font.Font(None, 30)
+    title = title_font.render('Magic Escape', True, (255, 255, 255))
+    text_surf1 = text_font.render(
+        'You have been selected by the Wizards\' Tribunal to find an artifact inside a ruin.', True, (255, 255, 255))
+    text_surf2 = text_font.render('As you traverse the ruins, you find yourself trapped with no way out!', True,
+                                (255, 255, 255))
+    text_surf3 = text_font.render('However, you choose to bravely continue and find the artifact.', True,
+                                (255, 255, 255))
+    text_surf4 = text_font.render('You ready your fireballs..... and immediately blackout.', True,
+                                (255, 255, 255))
+    text_surfplayer1 = text_font.render('This is you! ', True, (255, 255, 255))
+    text_surfplayer2 = text_font.render('Move with WASD. ', True, (255, 255, 255))
+    text_surfplayer3 = text_font.render('Sprint with SHIFT.', True, (255, 255, 255))
+    text_surfenemy1 = text_font.render('This is an Enemy! ', True, (255, 255, 255))
+    text_surfenemy2 = text_font.render('When they touch you, you lose health. ', True, (255, 255, 255))
+    text_surffire1 = text_font.render('This is a Fireball! ', True, (255, 255, 255))
+    text_surffire2 = text_font.render('Fire with left click. ', True, (255, 255, 255))
+    text_surfspell1 = text_font.render('These are Secondary Spells! ', True, (255, 255, 255))
+    text_surfspell2 = text_font.render('Fire with right click.', True, (255, 255, 255))
+    text_surfspell3 = text_font.render('These are found in the ruins.', True, (255, 255, 255))
+    text_surfstart = slightly_less_title_font.render('Press ENTER to start the main game!', True, (255, 255, 255))
+    text_surfstart2 = slightly_less_title_font.render('Press R to start the game with a random map!', True, (255, 255, 255))
+
+    title_surf.blit(text_surf1, (40, 100))
+    title_surf.blit(text_surf2, (40, 150))
+    title_surf.blit(text_surf3, (40, 200))
+    title_surf.blit(text_surf4, (40, 250))
+
+    title_surf.blit(draw_player(title_surf, 45, (73, 48, 199), (0, 0, 0), [1, 0], [1, 0])[0], (40, 350))
+    title_surf.blit(text_surfplayer1, (90, 350))
+    title_surf.blit(text_surfplayer2, (90, 380))
+    title_surf.blit(text_surfplayer3, (90, 410))
+
+    title_surf.blit(draw_enemy(title_surf, 45), (300, 350))
+    title_surf.blit(text_surfenemy1, (350, 350))
+    title_surf.blit(text_surfenemy2, (350, 380))
+
+    title_surf.blit(draw_fireball(title_surf, 45), (40, 465))
+    title_surf.blit(text_surffire1, (90, 470))
+    title_surf.blit(text_surffire2, (90, 490))
+
+    title_surf.blit(draw_earth(title_surf, 45), (310, 430))
+    title_surf.blit(draw_ice(title_surf, 45), (310, 455))
+    title_surf.blit(draw_wind(title_surf, 45), (310, 480))
+    title_surf.blit(text_surfspell1, (360, 430))
+    title_surf.blit(text_surfspell2, (360, 460))
+    title_surf.blit(text_surfspell3, (360, 490))
+    title_surf.blit(text_surfstart, (40, 620))
+    title_surf.blit(text_surfstart2, (40, 680))
+
+    title_surf.blit(title, (150, 0))
+
+    return title_surf
+
 def draw_lose_screen(screen, color1=(73, 48, 199), color2=(0, 0, 0)):
     lose_surf = pygame.Surface((screen.get_width(), screen.get_height())).convert_alpha()
     lose_surf.fill((0, 0, 0))
@@ -198,12 +384,12 @@ def draw_lose_screen(screen, color1=(73, 48, 199), color2=(0, 0, 0)):
     s = draw_s(lose_surf)
     e = draw_e(lose_surf)
     lose_surf.blit(y, (0, 50))
-    lose_surf.blit(o, (100, 50))
-    lose_surf.blit(u, (200, 50))
-    lose_surf.blit(l, (400, 50))
-    lose_surf.blit(o, (500, 50))
-    lose_surf.blit(s, (600, 50))
-    lose_surf.blit(e, (700, 50))
+    lose_surf.blit(o, (110, 50))
+    lose_surf.blit(u, (230, 50))
+    lose_surf.blit(l, (440, 50))
+    lose_surf.blit(o, (560, 50))
+    lose_surf.blit(s, (680, 50))
+    lose_surf.blit(e, (790, 50))
     hat_rect = pygame.rect.Rect((h_width * 2 / 9, 0), (h_width / 2, h_height))
     pygame.draw.ellipse(hat_surf, color3, hat_rect)
     pygame.draw.polygon(hat_surf, color3, (
@@ -237,7 +423,6 @@ def draw_lose_screen(screen, color1=(73, 48, 199), color2=(0, 0, 0)):
     lose_surf.blit(text_surf, (200, 650))
     return lose_surf
 
-
 def draw_win_screen(screen, color1=(73, 48, 199), color2=(0, 0, 0)):
     win_surf = pygame.Surface((screen.get_width(), screen.get_height())).convert_alpha()
     win_surf.fill((0, 0, 0))
@@ -255,11 +440,11 @@ def draw_win_screen(screen, color1=(73, 48, 199), color2=(0, 0, 0)):
     i = draw_i(win_surf)
     n = draw_n(win_surf)
     win_surf.blit(y, (50, 50))
-    win_surf.blit(o, (150, 50))
-    win_surf.blit(u, (250, 50))
-    win_surf.blit(w, (400, 50))
-    win_surf.blit(i, (500, 50))
-    win_surf.blit(n, (600, 50))
+    win_surf.blit(o, (160, 50))
+    win_surf.blit(u, (275, 50))
+    win_surf.blit(w, (520, 50))
+    win_surf.blit(i, (620, 50))
+    win_surf.blit(n, (720, 50))
     hat_rect = pygame.rect.Rect((h_width * 2 / 9, 0), (h_width / 5, h_height))
     pygame.draw.ellipse(hat_surf, color3, hat_rect)
     pygame.draw.polygon(hat_surf, color3, (
@@ -288,11 +473,10 @@ def draw_win_screen(screen, color1=(73, 48, 199), color2=(0, 0, 0)):
     font = pygame.font.Font(None, 40)
     text_surf = font.render('Press R to Restart', True, (255, 255, 255))
 
-
     win_surf.blit(text_surf, (200, 650))
     return win_surf
 
-
+#LETTERS
 def draw_y(screen):
     y_surf = pygame.Surface((screen.get_width() / 10, screen.get_height() / 10)).convert_alpha()
     y_surf.fill((0, 0, 0, 0))
@@ -303,7 +487,6 @@ def draw_y(screen):
     (y_width * 6 / 10, y_height / 2), (y_width * 6 / 10, y_height), (y_width * 4 / 10, y_height),
     (y_width * 4 / 10, y_height / 2), (0, y_height / 10),))
     return y_surf
-
 
 def draw_o(screen):
     o_surf = pygame.Surface((screen.get_width() / 10, screen.get_height() / 10)).convert_alpha()
@@ -317,7 +500,6 @@ def draw_o(screen):
     pygame.draw.rect(o_surf, (133, 0, 0), o_center)
     return o_surf
 
-
 def draw_u(screen):
     u_surf = pygame.Surface((screen.get_width() / 10, screen.get_height() / 10)).convert_alpha()
     u_surf.fill((0, 0, 0, 0))
@@ -329,7 +511,6 @@ def draw_u(screen):
     pygame.draw.rect(u_surf, (255, 255, 255), u_body)
     pygame.draw.rect(u_surf, (133, 0, 0), u_center)
     return u_surf
-
 
 def draw_w(screen):
     w_surf = pygame.Surface((screen.get_width() / 10, screen.get_height() / 10)).convert_alpha()
@@ -346,7 +527,6 @@ def draw_w(screen):
     w_surf.set_colorkey((133, 0, 0))
     return w_surf
 
-
 def draw_i(screen):
     i_surf = pygame.Surface((screen.get_width() / 10, screen.get_height() / 10)).convert_alpha()
     i_surf.fill((0, 0, 0, 0))
@@ -357,7 +537,6 @@ def draw_i(screen):
     pygame.draw.rect(i_surf, (255, 255, 255), i_body)
     pygame.draw.rect(i_surf, (255, 255, 255), i_dot)
     return i_surf
-
 
 def draw_n(screen):
     n_surf = pygame.Surface((screen.get_width() / 10, screen.get_height() / 10)).convert_alpha()
@@ -372,7 +551,6 @@ def draw_n(screen):
     n_surf.set_colorkey((133, 0, 0))
     return n_surf
 
-
 def draw_l(screen):
     l_surf = pygame.Surface((screen.get_width() / 10, screen.get_height() / 10)).convert_alpha()
     l_surf.fill((0, 0, 0, 0))
@@ -384,7 +562,6 @@ def draw_l(screen):
     pygame.draw.rect(l_surf, (255, 255, 255), l_body)
     pygame.draw.rect(l_surf, (133, 0, 0), l_center)
     return l_surf
-
 
 def draw_s(screen):
     s_surf = pygame.Surface((screen.get_width() / 10, screen.get_height() / 10)).convert_alpha()
@@ -400,7 +577,6 @@ def draw_s(screen):
     pygame.draw.rect(s_surf, (133, 0, 0), s_center2)
     return s_surf
 
-
 def draw_e(screen):
     e_surf = pygame.Surface((screen.get_width() / 10, screen.get_height() / 10)).convert_alpha()
     e_surf.fill((0, 0, 0, 0))
@@ -414,163 +590,3 @@ def draw_e(screen):
     pygame.draw.rect(e_surf, (133, 0, 0), e_center1)
     pygame.draw.rect(e_surf, (133, 0, 0), e_center2)
     return e_surf
-
-#gross code dont touch
-def draw_title_screen(screen):
-    def draw_player(screen, color1=(73, 48, 199), color2=(0, 0, 0)):
-        player_surf = pygame.Surface((screen.get_width() / 20, screen.get_width() / 20))
-        player_surf.fill(color1)
-        color3 = (62, 6, 145)
-        color4 = (45, 2, 110)
-        color5 = (191, 179, 42)
-        p_height = player_surf.get_height()
-        p_width = player_surf.get_width()
-        # eyes
-        pygame.draw.circle(player_surf, color2, (p_width * 5 / 7, p_height / 3), p_height / 8)
-        pygame.draw.circle(player_surf, color2, (p_width * 5 / 7, p_height * 2 / 3), p_height / 8)
-        # hat
-        hat_rect = pygame.rect.Rect((p_width * 2 / 9, 0), (p_width / 2, p_height))
-        pygame.draw.ellipse(player_surf, color3, hat_rect)
-        pygame.draw.polygon(player_surf, color3, (
-        (p_width * 3 / 100, p_height / 2), (p_width / 3, p_height / 5), (p_width / 3, p_height * 4 / 5)))
-        pygame.draw.circle(player_surf, color4, (p_width * 5 / 100, p_height / 2), 3)
-        pygame.draw.circle(player_surf, color5, (p_width * 3 / 5, p_height * 2 / 3), 1)
-        pygame.draw.circle(player_surf, color5, (p_width / 3, p_height / 2), 1)
-        pygame.draw.circle(player_surf, color5, (p_width / 3, p_height / 4), 1)
-        pygame.draw.circle(player_surf, color5, (p_width / 2, p_height / 5), 1)
-        pygame.draw.circle(player_surf, color5, (p_width / 3, p_height * 3 / 4), 1)
-        pygame.draw.circle(player_surf, color5, (p_width / 2, p_height * 2 / 5), 1)
-        pygame.draw.circle(player_surf, color5, (p_width / 3, p_height / 4), 1)
-
-        # mouth
-        pygame.draw.line(player_surf, color2, (p_width * 6 / 7, p_height / 3), (p_width * 6 / 7, p_height * 2 / 3),
-                        2)
-
-        return player_surf
-
-    def draw_enemy(screen, color1=(255, 0, 0), color2=(0, 0, 0)):
-        enemy_surf = pygame.Surface((screen.get_width() / 20, screen.get_width() / 20))
-        enemy_surf.fill(color1)
-        e_height = enemy_surf.get_height()
-        e_width = enemy_surf.get_width()
-        # eyes
-        pygame.draw.circle(enemy_surf, color2, (e_width * 4 / 7, e_height / 3), e_height / 8)
-        pygame.draw.circle(enemy_surf, color2, (e_width * 4 / 7, e_height * 2 / 3), e_height / 8)
-        # mouth
-        enemy_mouth = pygame.rect.Rect((e_width * 5 / 7, e_height / 5), (e_width * 2 / 7, e_height * 4 / 6))
-        pygame.draw.polygon(enemy_surf, (255, 255, 255), (
-        (e_width * 5 / 7, e_height * 5 / 10), (e_width * 5 / 7, e_height * 7 / 10),
-        (e_width * 90 / 100, e_height * 13 / 20)))
-        pygame.draw.polygon(enemy_surf, (255, 255, 255), (
-        (e_width * 5 / 7, e_height * 5 / 10), (e_width * 11 / 14, e_height * 3 / 10),
-        (e_width * 90 / 100, e_height * 9 / 20)))
-        pygame.draw.arc(enemy_surf, color2, enemy_mouth, math.pi / 2, math.pi * 3 / 2, 3)
-        # eyebrows
-        pygame.draw.line(enemy_surf, color2, (e_width * 2 / 7, e_height / 6), (e_width * 4 / 7, e_height / 2), 3)
-        pygame.draw.line(enemy_surf, color2, (e_width * 2 / 7, e_height * 5 / 6), (e_width * 4 / 7, e_height / 2),
-                        3)
-        return enemy_surf
-
-    def draw_earth(screen):
-        earth_surf = pygame.Surface((screen.get_width() / 20, screen.get_width() / 20)).convert_alpha()
-        earth_surf.fill((0, 0, 0, 0))
-        e_height = earth_surf.get_height()
-        e_width = earth_surf.get_width()
-        pygame.draw.circle(earth_surf, (59, 36, 1), (e_width * 4 / 6, e_height / 2), e_width / 3)
-        pygame.draw.circle(earth_surf, (82, 56, 16), (e_width * 2 / 6, e_height / 2), e_width / 3)
-        pygame.draw.circle(earth_surf, (107, 81, 40), (0, e_height / 2), e_width / 3)
-
-        return earth_surf
-
-    def draw_fireball(screen):
-        color1 = (219, 76, 20)
-        color2 = (237, 176, 43)
-        fire_surf = pygame.Surface((screen.get_width() / 20, screen.get_width() / 20)).convert_alpha()
-        fire_surf.fill((0, 0, 0, 0))
-        f_height = fire_surf.get_height()
-        f_width = fire_surf.get_width()
-        pygame.draw.polygon(fire_surf, color2, ((0, f_height / 3),
-                                                (f_width / 6, f_height / 3),
-                                                (f_width / 10, f_height / 5),
-                                                (f_width / 4, f_height / 5),
-                                                (f_width / 5, f_height / 10),
-                                                (f_width * 3 / 5, f_height / 8),
-                                                (f_width * 4 / 5, f_height / 4),
-                                                (f_width * 35 / 40, f_height / 2),
-                                                (f_width * 4 / 5, f_height * 3 / 4),
-                                                (f_width * 3 / 5, f_height * 7 / 8),
-                                                (f_width / 5, f_height * 9 / 10),
-                                                (f_width / 4, f_height * 4 / 5),
-                                                (f_width / 10, f_height * 4 / 5),
-                                                (f_width / 6, f_height * 2 / 3),
-                                                (0, f_height * 2 / 3)
-                                                ))
-        pygame.draw.circle(fire_surf, color1, (f_width / 2, f_height / 2), f_height / 3)
-        return fire_surf
-
-    #unused since ice was removed during development
-    # def draw_ice(screen):
-    #     ice_surf = pygame.Surface((screen.get_width() / 20, screen.get_width() / 20)).convert_alpha()
-    #     ice_surf.fill((0, 0, 0, 0))
-    #     i_height = ice_surf.get_height()
-    #     i_width = ice_surf.get_width()
-    #     pygame.draw.polygon(ice_surf, (109, 214, 252), (
-    #     (i_width / 7, i_height / 9), (i_width * 6 / 10, i_height / 6), (i_width * 95 / 100, i_height * 4 / 10),
-    #     (i_width / 3, i_height * 2 / 5)))
-    #     pygame.draw.polygon(ice_surf, (74, 171, 207), (
-    #     (i_width / 7, i_height * 6 / 9), (i_width * 4 / 10, i_height * 4 / 6),
-    #     (i_width * 95 / 100, i_height * 4 / 10), (i_width / 3, i_height * 2 / 5)))
-    #     pygame.draw.polygon(ice_surf, (20, 91, 117), (
-    #     (i_width / 7, i_height / 9), (i_width / 3, i_height * 2 / 5), (i_width / 7, i_height * 6 / 9),
-    #     (i_width / 100, i_height * 2 / 5)))
-
-    #     return ice_surf
-
-    title_surf = pygame.Surface((screen.get_width(), screen.get_height())).convert_alpha()
-    title_surf.fill((0, 0, 0))
-    title_font = pygame.font.Font(None, 100)
-    slightly_less_title_font = pygame.font.Font(None, 70)
-
-    text_font = pygame.font.Font(None, 30)
-    title = title_font.render('Magic Escape', True, (255, 255, 255))
-    text_surf1 = text_font.render(
-        'You have been selected by the WC Tribunal to find an artifact inside a ruin.', True, (255, 255, 255))
-    text_surf2 = text_font.render('As you traverse the ruins, you find yourself trapped with no way out!', True,
-                                (255, 255, 255))
-    text_surf3 = text_font.render('However, you choose to bravely continue and find the artifact.', True,
-                                (255, 255, 255))
-    text_surf4 = text_font.render('You ready your fireballs..... and immediately blackout.', True,
-                                (255, 255, 255))
-    text_surfplayer1 = text_font.render('This is you! ', True, (255, 255, 255))
-    text_surfplayer2 = text_font.render('Move with WASD. ', True, (255, 255, 255))
-    text_surfenemy1 = text_font.render('This is an Enemy! ', True, (255, 255, 255))
-    text_surfenemy2 = text_font.render('When they touch you, you lose health. ', True, (255, 255, 255))
-    text_surffire1 = text_font.render('This is a Fireball! ', True, (255, 255, 255))
-    text_surffire2 = text_font.render('Fire with left click. ', True, (255, 255, 255))
-    text_surfspell1 = text_font.render('These are Secondary Spells! ', True, (255, 255, 255))
-    text_surfspell2 = text_font.render('Fire with right click.', True, (255, 255, 255))
-    text_surfspell3 = text_font.render('These are found in the ruins.', True, (255, 255, 255))
-    text_surfstart = slightly_less_title_font.render('Press ENTER to start the game!', True, (255, 255, 255))
-
-    title_surf.blit(text_surf1, (40, 100))
-    title_surf.blit(text_surf2, (40, 150))
-    title_surf.blit(text_surf3, (40, 200))
-    title_surf.blit(text_surf4, (40, 250))
-    title_surf.blit(draw_player(title_surf, (73, 48, 199)), (40, 350))
-    title_surf.blit(text_surfplayer1, (90, 350))
-    title_surf.blit(text_surfplayer2, (90, 380))
-    title_surf.blit(draw_enemy(title_surf), (300, 350))
-    title_surf.blit(text_surfenemy1, (350, 350))
-    title_surf.blit(text_surfenemy2, (350, 380))
-    title_surf.blit(draw_fireball(title_surf), (40, 410))
-    title_surf.blit(text_surffire1, (90, 410))
-    title_surf.blit(text_surffire2, (90, 440))
-    title_surf.blit(draw_earth(title_surf), (310, 410))
-    title_surf.blit(text_surfspell1, (360, 410))
-    title_surf.blit(text_surfspell2, (360, 440))
-    title_surf.blit(text_surfspell3, (360, 470))
-    title_surf.blit(text_surfstart, (40, 600))
-
-    title_surf.blit(title, (150, 0))
-
-    return title_surf

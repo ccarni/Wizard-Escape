@@ -4,9 +4,9 @@
 eeee***w***eeee
 *******w*******
 ***************
-*wwww*****wwww*
-d******w******d
-*wwww*****wwww*
+*wwww**h**wwww*
+d*****hgh*****d
+*wwww**h**wwww*
 ***************
 *******w*******
 eeqq***w***qqee

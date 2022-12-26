@@ -1,3 +1,4 @@
+from matplotlib import projections
 import pygame
 import numpy as np
 import art
@@ -25,11 +26,6 @@ class Projectile(pygame.sprite.Sprite):
         angle = -np.degrees(np.arctan2(vector[1], vector[0])) % 360.0
         return angle
 
-    def flip(self, index):
-        #self.image = pygame.transform.rotate(self.image, (self.rotate + 180) % 360)
-        #self.v[index] *= -1
-        self.destroy() # lazy so just replace flip will kill
-
     def destroy(self):
         self.kill()
         del self
@@ -40,27 +36,17 @@ class Projectile(pygame.sprite.Sprite):
         image = pygame.transform.rotate(draw_function, rotation)
         return image
 
-    def update(self, bounds):
-        #kill if over lifetime
+    def update(self, bounds, fps):
+        # kill if over lifetime
         self.lifetime -= 1
         if self.lifetime <= 0:
             self.destroy()
 
-        self.rect.x += self.v[0]
-        self.rect.y += self.v[1]
+        self.rect.x += self.v[0] * (30/fps)
+        self.rect.y += self.v[1] * (30/fps)
 
-        if self.rect.left < bounds.left:
-            self.rect.left = bounds.left
-            self.flip(0)
-        if self.rect.right > bounds.right:
-            self.rect.right = bounds.right
-            self.flip(0)
-        if self.rect.top < bounds.top:
-            self.rect.top = bounds.top
-            self.flip(1)
-        if self.rect.bottom > bounds.bottom:
-            self.rect.bottom = bounds.bottom
-            self.flip(1)
+        if self.rect.left < bounds.left or self.rect.right > bounds.right or self.rect.top < bounds.top or self.rect.bottom > bounds.bottom:
+            self.destroy()
 
 class Fireball(Projectile):
     def __init__(self, size, screen, pos=(0, 0), v=(0,0), lifetime=300, damage=1):
@@ -76,3 +62,13 @@ class Earth(Projectile):
     def __init__(self, size, screen, pos=(0, 0), v=(0,0), lifetime=300, damage=1):
         Projectile.__init__(self, size, screen, pos, v, lifetime, damage)
         self.image = self.setup_image(art.draw_earth(self.screen, self.size))
+
+class Wind(Projectile):
+    def __init__(self, size, screen, pos=(0, 0), v=(0,0), lifetime=300, damage=1):
+        Projectile.__init__(self, size, screen, pos, v, lifetime, damage)
+        self.image = self.setup_image(art.draw_wind(self.screen, self.size))
+
+class Leaf(Projectile):
+    def __init__(self, size, screen, pos=(0, 0), v=(0, 0), lifetime=300, damage=1):
+        Projectile.__init__(self, size, screen, pos, v, lifetime, damage)
+        self.image = self.setup_image(art.draw_leaf(self.screen, self.size))

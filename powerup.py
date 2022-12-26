@@ -12,7 +12,7 @@ class Powerup(pygame.sprite.Sprite):
         self.rect.x = pos[0]
         self.rect.y = pos[1]
 
-    #runner passed in so that powerup can do anything needed
+    # runner passed in so that powerup can do anything needed
     def on_interact(self, runner):
         print('interact function not implemented')
 
@@ -26,6 +26,18 @@ class Heart(Powerup):
             runner.player.health += 1
             self.kill()
             del self
+
+class GoldHeart(Powerup):
+    def __init__(self, screen, image, pos):
+        Powerup.__init__(self, screen, image, pos)
+
+    def on_interact(self, runner):
+        runner.player.max_health += 1
+        runner.player.health += 2
+        if runner.player.health > runner.player.max_health:
+            runner.player.health = runner.player.max_health
+        self.kill()
+        del self
 
 class Trophy(Powerup):
     def __init__(self, screen, image, pos):
@@ -43,17 +55,17 @@ class Attack(Powerup):
         self.attack_cooldown = attack_cooldown
 
     def on_interact(self, runner):
-        if runner.primary_attack_down:
-            print(runner.player.primary_attack)
+        if runner.primary_pickup:
             previous_attack = runner.player.primary_attack
             previous_cooldown = runner.player.primary_attack_cooldown
             runner.player.set_attack(0, self.attack, self.attack_cooldown)
             self.attack = previous_attack
-            self.attack = previous_cooldown
-        elif runner.secondary_attack_down:
+            self.attack_cooldown = previous_cooldown
+            self.image = self.attack(runner.mouse_pos, runner.player.rect.center, runner.screen).image
+        elif runner.secondary_pickup:
             previous_attack = runner.player.secondary_attack
             previous_cooldown = runner.player.secondary_attack_cooldown
             runner.player.set_attack(1, self.attack, self.attack_cooldown)
             self.attack = previous_attack
-            self.attack = previous_cooldown
-            self.image = self.attack().image
+            self.attack_cooldown = previous_cooldown
+            self.image = self.attack(runner.mouse_pos, runner.player.rect.center, runner.screen).image
